@@ -4,7 +4,8 @@ require('dotenv').config()
 const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
-let courtData = require("./Local Database/courtsData.json")
+let { courtData, availabilityData } = require("./Local Database/courtsData");
+
 
 const app = express();
 app.use(express.json());
@@ -15,23 +16,23 @@ app.get(["/","/home"],
     const pincode = req.query.pincode;
     const sportType = req.query.sportType;
     const name = req.query.name;
-    let results = [];
-    //let results = courtData.filter(obj => !pincode || obj.pincode == pincode);
+    let result = Object.values(courtData); // Convert object to array
+    result = result.filter((obj) => {  // Store the filtered result
+        return ((!pincode || obj.pincode == pincode) && (!sportType || sportType == obj.sportType));
+    });
+    res.send(result); // Send the filtered data
 
-    for(i in courtData){
-        obj = courtData[i];
-        if((!pincode || pincode == obj.pincode)){
-            results.push(obj);
-        }
-    }
-    res.json(results);
 })
 
 
 app.get("/getCourtDetails/:courtId",(req,res)=>{
     const courtId = req.params.courtId;
-    const uuid  = req.params.uuid;
-    res.send({courtId : courtId});
+    const response = Object.assign({}, courtData[courtId], {"slots" : availabilityData[courtId]}, {"media resources" : {}})
+    //response = {...courtData[courtId], ... {"slots" : availabilityData[courtId]}, ...{"media resources" : {}} also works
+    if(courtId in availabilityData){
+        res.send(response);   
+    }
+    res.status(404).send("Dates not available for given court...");
 })
 
 app.post("/bookCourt",(req, res)=>{
@@ -52,7 +53,7 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, ()=>{
     console.log(PORT);
     console.log("Server Spinned Up...");
-    if(courtData.length!=0){
+    if(Object.keys(courtData).length!=0){
         console.log("Loaded Court Local Data Successfully");
     }else{
         console.log("Failed to load local court data...!!!");

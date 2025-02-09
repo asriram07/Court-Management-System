@@ -38,3 +38,28 @@
 
 
 //null vs undefined
+
+
+
+//New Learning
+
+//let results = courtData.filter(obj => !pincode || obj.pincode == pincode);
+    // let results = courtData.filter((obj)=>{ 
+    //     return ((!pincode || obj.pincode == pincode) && (!sportType || sportType== obj.sportType))    
+    // })
+    // for(let i in results){
+    //     results[i]['availabilityData'] = availabilityData[results[i]["courtId"]]
+    // }
+
+
+// if CourtData is Object
+
+// use Object.keys(courtData) -> Returns keys
+// Object.values(courtData) -> Returns values
+
+
+
+
+//const response = Object.assign({}, courtData[courtId], {"slots" : availabilityData[courtId]})
+// Copies objects into together
+//response = {...courtData[courtId], ... {"slots" : availabilityData[courtId]}, ...{"media resources" : {}} also works

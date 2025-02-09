@@ -1,0 +1,9 @@
+1. Get Particular Court Details
+2. Understand Payment Workflows
+#Done till here
+
+
+3. Create Bookings mini-version with Redis
+
+4. Create Database Mappings
+5. Single Sign-On Implemntaion
