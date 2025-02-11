@@ -4,10 +4,25 @@ require('dotenv').config()
 const express = require("express");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const Stripe = require("stripe");
+const CORS = require("cors");
+const allowedOrigins = ["http://127.0.0.1:5501"];
+
+const corsOptions = {
+    origin : (origin, callback)=>{
+        if(!origin || allowedOrigins.includes(origin)){
+            callback(null, true);
+        }else{
+            callback(new Error("Not allowed by CORS"));
+        }
+    }
+}
+const stripe = Stripe(process.env.STRIPE_KEY);
 let { courtData, availabilityData } = require("./Local Database/courtsData");
 
 
 const app = express();
+app.use(CORS(corsOptions));
 app.use(express.json());
 
 app.get(["/","/home"],
@@ -35,12 +50,15 @@ app.get("/getCourtDetails/:courtId",(req,res)=>{
     res.status(404).send("Dates not available for given court...");
 })
 
-app.post("/bookCourt",(req, res)=>{
+app.post("/bookCourt",async (req, res)=>{
     //console.log(req.query); -> We can get query parameters in POST Request as well
-
     let requestBody = req.body;
-    console.log(requestBody);
-    res.send([]);
+    const {amount, currency, bookingDetails} = requestBody;
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency,
+    });
+    res.send(paymentIntent);
 })
 
 
