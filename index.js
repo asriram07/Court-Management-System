@@ -6,6 +6,14 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const Stripe = require("stripe");
 const CORS = require("cors");
+const redis = require("redis");
+const redisClient = redis.createClient({
+    url:'redis://localhost:6379'
+})
+redisClient.on('connect',()=>console.log('Connected to Redis ✅'));
+redisClient.on('error', (err) => console.error('Redis Error ❌:', err));
+
+
 const allowedOrigins = ["http://127.0.0.1:5501"];
 
 const corsOptions = {
@@ -50,17 +58,50 @@ app.get("/getCourtDetails/:courtId",(req,res)=>{
     res.status(404).send("Dates not available for given court...");
 })
 
-app.post("/bookCourt",async (req, res)=>{
+app.post("/bookCourt",async (req, res, amount = 100, currency = 200)=>{
     //console.log(req.query); -> We can get query parameters in POST Request as well
+    let userId = "1234";
+    let date = Date.now();
+    let bookingId = date + "-" + userId; //`${date}-${userId}` ->Convers to string automatically
     let requestBody = req.body;
-    const {amount, currency, bookingDetails} = requestBody;
+    const {items} = requestBody;
+    let value = 0;
+    for(let item in items){
+        if(item in courtData){
+            value+=courtData[item]['pricePerHour']
+        }
+    }
+    let prev = await redisClient.get(userId);
+    value = Math.round(value*100)//always sends value converted to cents or paise etc
+    
     const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency,
+        amount : value,
+        currency : "USD"
     });
-    res.send(paymentIntent);
+    const paymentIntentId =  paymentIntent["id"];
+    console.log(bookingId, paymentIntentId);
+    //const paymentIntent = {};
+    await redisClient.set(userId, JSON.stringify({bookingId, value}));
+    await redisClient.set(bookingId, paymentIntentId);
+    res.send({paymentIntent, value, bookingId});
 })
 
+app.post("/verify-payment",async (req,res)=>{
+    let userId =  "1234";
+    const {bookingId} = req.body;
+    const redisValue = await redisClient.get(userId);
+    const paymentIntentId = await redisClient.get(bookingId);
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    if(redisValue!=null){
+        let parsedBody = JSON.parse(redisValue);
+        if(parsedBody["bookingId"]==bookingId && paymentIntent.status=='success'){
+            res.send({"message" : "success"});
+            return;
+        }
+        return res.send({"message" : "Not completed yet"});
+    }
+    res.send({"message" : "Failure"})
+})
 
 
 app.use((req, res)=>{
@@ -69,6 +110,19 @@ app.use((req, res)=>{
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, ()=>{
+    (async () => {
+        try {
+            await redisClient.connect(); // Connect to Redis
+    
+            // Set and get a key-value pair
+            await redisClient.set('myKey', 'Hello, Redis!');
+            const value = await redisClient.get('myKey');
+            console.log('Value from Redis:', value);
+
+        } catch (error) {
+            console.error('Redis Connection Failed:', error);
+        }
+    })();
     console.log(PORT);
     console.log("Server Spinned Up...");
     if(Object.keys(courtData).length!=0){
