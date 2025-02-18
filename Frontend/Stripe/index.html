@@ -47,7 +47,14 @@
             const response = await fetch("http://localhost:5000/bookCourt", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: 1000, currency: "usd" }) // Amount in cents
+                body: JSON.stringify({ items : {
+                    "CRT-7017":{
+                        'courtId' : 'CRT-7017',
+                        'date' : '2025-01-02',
+                        'time' : '06:00PM'
+                        //can add quantity for ecommerce here
+                    }
+                } }) // Amount in cents
             });
 
             const { client_secret } = await response.json();
