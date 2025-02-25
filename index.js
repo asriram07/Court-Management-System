@@ -33,8 +33,7 @@ const app = express();
 app.use(CORS(corsOptions));
 app.use(express.json());
 
-app.get(["/","/home"],
-    (req,res)=>{
+app.get(["/","/home"],(req,res)=>{
     const date = req.query.date;
     const pincode = req.query.pincode;
     const sportType = req.query.sportType;
@@ -86,7 +85,7 @@ app.post("/bookCourt",async (req, res, amount = 100, currency = 200)=>{
     res.send({paymentIntent, value, bookingId});
 })
 
-app.post("/verify-payment",async (req,res)=>{
+app.post("/verify-payment", async (req, res)=>{
     let userId =  "1234";
     const {bookingId} = req.body;
     const redisValue = await redisClient.get(userId);
