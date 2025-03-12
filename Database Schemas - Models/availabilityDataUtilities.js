@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 
 function getAvailabilityDataSchema(){
     const availabilityDetailsSchema = new mongoose.Schema({
-        'index' : {type: String, index : true, required : true},
+        //unique automatically creates an index
+        'index' : {type: String, required : true, unique: true},
         'slots' : {type : Array}
     });
     return availabilityDetailsSchema;

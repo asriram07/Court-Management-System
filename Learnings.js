@@ -63,3 +63,13 @@
 //const response = Object.assign({}, courtData[courtId], {"slots" : availabilityData[courtId]})
 // Copies objects into together
 //response = {...courtData[courtId], ... {"slots" : availabilityData[courtId]}, ...{"media resources" : {}} also works
+
+
+
+//No matter what I do I cannot import connection synchronously for
+//MongoDB Database.
+//It's always asynchronous so better use a function to do this.
+
+
+//Can't use await asyncFunction() directly.
+//Use inside (async ()->{}());;
