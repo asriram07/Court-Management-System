@@ -73,3 +73,8 @@
 
 //Can't use await asyncFunction() directly.
 //Use inside (async ()->{}());;
+
+
+//How I did git refacgtoring rebasing
+
+//need to learn about gitignore
