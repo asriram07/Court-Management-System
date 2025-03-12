@@ -23,12 +23,7 @@ function getCourtsDataSchema() {
         lattitude: { type: Number, required: true },
         longitude: { type: Number, required: true },
       },
-      photos: [
-        {
-          link: { type: String, required: true }, // URL of the photo
-          count: { type: Number, required: true, min: 1 }, // Number of photos
-        },
-      ],
+      photos: {type : Array}
     },
     { timestamps: true }
   );

@@ -1,6 +1,3 @@
-const court = require("./courtDetailsSchema");
-const courtModel = court.courtModel;
-
 const sportsCourts = [
     { court_name: "Grand Slam Basketball Court", court_type: "Basketball", pincode: "130001" },
     { court_name: "Elite Hoops Arena", court_type: "Basketball", pincode: "130002" },
@@ -36,60 +33,35 @@ const sportsCourts = [
     { court_name: "The Perfect Serve Court", court_type: "Tennis", pincode: "130010" }
 ];
 
+const courtTimings = [
+    "10:00 AM - 10:30 AM",
+    "10:30 AM - 11:00 AM",
+    "11:00 AM - 11:30 AM",
+    "11:30 AM - 12:00 PM",
+    "12:00 PM - 12:30 PM",
+    "12:30 PM - 1:00 PM",
+    "1:00 PM - 1:30 PM",
+    "1:30 PM - 2:00 PM",
+    "2:00 PM - 2:30 PM",
+    "2:30 PM - 3:00 PM",
+    "3:00 PM - 3:30 PM",
+    "3:30 PM - 4:00 PM",
+    "4:00 PM - 4:30 PM",
+    "4:30 PM - 5:00 PM",
+    "5:00 PM - 5:30 PM",
+    "5:30 PM - 6:00 PM",
+    "6:00 PM - 6:30 PM",
+    "6:30 PM - 7:00 PM",
+    "7:00 PM - 7:30 PM",
+    "7:30 PM - 8:00 PM",
+    "8:00 PM - 8:30 PM",
+    "8:30 PM - 9:00 PM",
+    "9:00 PM - 9:30 PM",
+    "9:30 PM - 10:00 PM"
+];
 
-function generateRecords(){
-    let results = [];
-    i = 0
-    for(let obj of sportsCourts){
-        let temp = {...obj};
-        temp['court_id'] = `court-${i}`
-        temp['court_contact_details'] = {
-            'email' : "sample@gmail.com",
-            "phone" : "9999999999"
-        }
-        temp['court_address'] = "1505 W Tharpe St",
-        temp['city'] = "Tallahassee",
-        temp['state'] = "Florida",
-        temp['coordinates'] = {
-            'lattitude' : 90,
-            'longitude' : 90
-        },
-        temp['photos'] = [
-            {
-                "link" : "jwbudw",
-                'count' : 1
-            }
-        ] 
-        results.push(temp);
-        //console.log(temp);
-        i+=1;
-    }
 
-    // for(i = 0; i<30;i++){
-    //     console.log(sportsCourts[i]);
-    // }
-    return results;
-}
-
-let results = generateRecords();
-// console.log(results);
-// courtModel.insertMany(results)
-//     .then(() => {
-//         console.log("Records inserted successfully");
-//     })
-//     .catch(err => {
-//         console.log("Error inserting records:", err);
-//     });
-
-// ✅ Fetch Records to Verify Insertion
-courtModel.find({'pincode' : '130008'})
-    .then(records => {
-        if (records.length === 0) {
-            console.log("⚠️ No records found. Data may not be inserted.");
-        } else {
-            console.log("✅ Fetched Records:", records);
-        }
-    })
-    .catch(err => {
-        console.error("Error fetching records:", err);
-    });
+module.exports = {
+    courts : sportsCourts,
+    courtTimings : courtTimings
+};
