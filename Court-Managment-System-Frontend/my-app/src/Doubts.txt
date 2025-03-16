@@ -1,0 +1,4 @@
+1. Why window.alert('user not logged in..') appeared twice in dev mode.
+2. Order of execution in react component
+3. useEffect() executed definitelyy before componet is unmounted.
+4. useNavigate() can be used inside BrowserRouter component.
